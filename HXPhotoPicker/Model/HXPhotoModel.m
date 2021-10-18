@@ -1746,12 +1746,15 @@
 }
 
 - (void)getImageURLWithImageData:(NSData *)imageData
+                            info:(NSDictionary *)info
                          success:(HXModelImageURLSuccessBlock _Nullable)success
                           failed:(HXModelFailedBlock _Nullable)failed{
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
         NSString *suffix;
-        if (self.photoEdit) {
+        if ([[info objectForKey:@"PHImageFileUTIKey"] isEqualToString:@"public.heic"]) {
+            suffix = @"heic";
+        }else if (self.photoEdit) {
             suffix = @"jpeg";
         }else {
             if (UIImagePNGRepresentation([UIImage imageWithData:imageData])) {
@@ -1848,7 +1851,7 @@
                     return;
                 }
                 
-                [weakSelf getImageURLWithImageData:imageData success:^(NSURL * _Nullable imageURL, HXPhotoModel * _Nullable model, NSDictionary * _Nullable info) {
+                [weakSelf getImageURLWithImageData:imageData info:info  success:^(NSURL * _Nullable imageURL, HXPhotoModel * _Nullable model, NSDictionary * _Nullable info) {
                     weakSelf.imageURL = imageURL;
                     if (success) {
                         success(imageURL, HXPhotoModelMediaSubTypePhoto, NO, weakSelf);
